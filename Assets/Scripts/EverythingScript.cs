@@ -29,19 +29,27 @@ public class EverythingScript : MonoBehaviour
     // Bug - Money variable can  Overflow (if money is over +-2 billions)
         // Change to float (3.1E+38) or double (1.7E+308) 
 
-    // Task 3 - How to Do Idle clicking?
-        // Loop that uses Click() every x (variable) second 
+    
 
     // Note If TotalMoney exceeds (3.1E+38) change to double (1.7E+308) 
     public float TotalMoney = 0;   // Starting amount of money
     public int ClickPower = 1;   // Initial click power
     public TextMeshProUGUI moneyText;       // Reference to the Text component that displays the Money
+
+    // Cursors click every 1 second
+    public float CursorClickingRate = 1f;
+    
+    // Int Max value is 2,1B
+    // Float max value 10 ^ 38
+    // Double max value 10 ^ 308
+    public int CursorPrice = 5;
     
     private void Start()
     {
         UpdateScoreUI();
     }
 
+    // Method signature - visibility(public/private) | returnType | MethodName (MethodVariable)
     public void Click()
     {
         TotalMoney += ClickPower; // Is the same as -> totalMoney = totalMoney + clickPower;  
@@ -51,5 +59,30 @@ public class EverythingScript : MonoBehaviour
     void UpdateScoreUI()
     {
         moneyText.text = TotalMoney.ToString();
+    }
+    
+    
+    // Task 3 - How to Do Idle clicking?
+        // Loop that uses Click() every x (variable) second 
+            // Global multiplier
+            
+    // Task 4 - Cursors cost money
+        // Before InvokeRepeating check if can you afford
+        
+    // Bug from Task 4 - Money text does not update after we bought the cursor
+        // After we spend the money call method - UpdateScoreUI
+        
+    // Bonus task - Add Cursor price scaling
+    
+    public void CreateCursor()
+    {
+        if (TotalMoney >= CursorPrice)
+        {
+            InvokeRepeating(nameof(Click), 1.0f, CursorClickingRate);
+
+            TotalMoney -= CursorPrice;
+            
+            UpdateScoreUI();
+        }
     }
 }
