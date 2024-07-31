@@ -73,6 +73,9 @@ public class EverythingScript : MonoBehaviour
         // After we spend the money call method - UpdateScoreUI
         
     // Bonus task - Add Cursor price scaling
+        // --> Incremental price increase (price + 2)
+        // Percentage price increase (10% per each building - price * 1.1 ) 
+        // Custom Function (2% ---- 40% ----- 5%)
     
     public void CreateCursor()
     {
@@ -81,6 +84,7 @@ public class EverythingScript : MonoBehaviour
             InvokeRepeating(nameof(Click), 1.0f, CursorClickingRate);
 
             TotalMoney -= CursorPrice;
+            CursorPrice += 2;
             
             UpdateScoreUI();
         }
