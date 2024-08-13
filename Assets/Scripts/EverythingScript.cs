@@ -56,7 +56,7 @@ public class EverythingScript : MonoBehaviour
         UpdateScoreUI();
     }
 
-    void UpdateScoreUI()
+    public void UpdateScoreUI()
     {
         moneyText.text = TotalMoney.ToString();
     }
