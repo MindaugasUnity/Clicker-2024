@@ -1,8 +1,10 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-public class EverythingScript : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
     // Method - Description for PC to do something
     // Algorithm - Steps how to do something
@@ -58,7 +60,7 @@ public class EverythingScript : MonoBehaviour
 
     public void UpdateScoreUI()
     {
-        moneyText.text = TotalMoney.ToString();
+        moneyText.text = Mathf.FloorToInt(TotalMoney).ToString();
     }
     
     

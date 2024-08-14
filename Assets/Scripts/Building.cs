@@ -1,4 +1,4 @@
-using System;
+using System.Collections;
 using UnityEngine;
 
 namespace DefaultNamespace
@@ -13,7 +13,7 @@ namespace DefaultNamespace
                     // Increase building price
                     // Update the UI
                 // call GenerateMoney method
-            // Generate money
+            
             // Note: Use EverythingScript currency (TotalMoney)
             
         // Bonus
@@ -23,15 +23,21 @@ namespace DefaultNamespace
                 // [IDEA: 2] Increase current price at milestones (ex: current price * 3) so you never reach 10k
                 // [IDEA: 3] Hard cap but From x building start increasing price scaling
                 // Hint: Think about the process
-            // How we going to access TotalMoney or UpdateUI method
-                // Create variable and using it access it as object
-
+                // [IDEA: 4] money per fill * totalNumberOfBuilding
+                
+        // Buy Building variables
         public float BasePrice = 50f;
         public float CurrentPrice;
-
         public float PriceScaling = 1.1f;
+        
+        // GenerateMoney Variables
+        public float BuildingCount;
+        public float MoneyAmountPerFill = 5;
+        public float FillTime = 2f;
 
-        public EverythingScript GameManager;
+        public GameManager GameManager;
+
+        private Coroutine generateMoneyOvertimeCoroutine;
 
         private void Start()
         {
@@ -48,7 +54,38 @@ namespace DefaultNamespace
                 
                 // Update the UI
                 GameManager.UpdateScoreUI();
+                
+                // The same as BuildingCount += 1;
+                BuildingCount++;
+                
                 // Generate Money
+                if (generateMoneyOvertimeCoroutine is null)
+                {
+                    generateMoneyOvertimeCoroutine = StartCoroutine(GenerateMoney());
+                }
+            }
+        }
+        
+        
+        // Generate money
+            // Variables: buildingCount, moneyAmountPerFill, fillTime
+            // Logic (In Coroutine)
+            // Generate money until stopped (while true)
+            // Wait for the fill time
+            // GenerateMoney using this formula = money per fill * totalNumberOfBuilding
+            // Add that money to GameManager.TotalAmount
+            // Update the UI
+
+        private IEnumerator GenerateMoney()
+        {
+            while (true)
+            {
+                yield return new WaitForSeconds(FillTime);
+
+                float buildingIncome = BuildingCount * MoneyAmountPerFill;
+
+                GameManager.TotalMoney += buildingIncome;
+                GameManager.UpdateScoreUI();
             }
         }
     }
