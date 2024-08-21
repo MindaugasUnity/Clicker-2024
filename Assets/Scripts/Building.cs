@@ -1,5 +1,8 @@
+using System;
 using System.Collections;
+using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace DefaultNamespace
 {
@@ -29,11 +32,19 @@ namespace DefaultNamespace
         public float BasePrice = 50f;
         public float CurrentPrice;
         public float PriceScaling = 1.1f;
+       
         
         // GenerateMoney Variables
         public float BuildingCount;
         public float MoneyAmountPerFill = 5;
         public float FillTime = 2f;
+        
+        // Button Related
+        public Button Button;
+        
+        public string Name = "New Building";
+        public TextMeshProUGUI ButtonText;
+        public TextMeshProUGUI PriceText;
 
         public GameManager GameManager;
 
@@ -42,6 +53,27 @@ namespace DefaultNamespace
         private void Start()
         {
             CurrentPrice = BasePrice;
+            
+            UpdateBuildingText();
+        }
+        
+        // Enable building button if you have enough money
+            // Variable - button 
+            // Total money > CurrentPrice
+            // Update
+        private void Update()
+        {
+            Button.interactable = GameManager.TotalMoney >= CurrentPrice;
+            
+            // The same as doing this
+            // if (GameManager.TotalMoney >= CurrentPrice)
+            // {
+            //     Button.interactable = true;
+            // }
+            // else
+            // {
+            //     Button.interactable = false;
+            // }
         }
 
         public void Buy()
@@ -54,9 +86,12 @@ namespace DefaultNamespace
                 
                 // Update the UI
                 GameManager.UpdateScoreUI();
+                UpdateBuildingText();
                 
                 // The same as BuildingCount += 1;
                 BuildingCount++;
+                
+                
                 
                 // Generate Money
                 if (generateMoneyOvertimeCoroutine is null)
@@ -87,6 +122,22 @@ namespace DefaultNamespace
                 GameManager.TotalMoney += buildingIncome;
                 GameManager.UpdateScoreUI();
             }
+        }
+        
+        // Display Building name and price
+            // variables: Name, ButtonText (extra one if you want double price)
+            // Connect Button text in Unity
+            // Method: Display text: "Building - Price"
+            // Where to call: Buy, 
+        
+        public void UpdateBuildingText()
+        {
+            // The same
+            // ButtonText.text = Name + " - " + CurrentPrice;
+            ButtonText.text = $"{Name}";
+            PriceText.text = $"{CurrentPrice}";
+            
+            // New variables.text = CurrentPrice
         }
     }
 }
