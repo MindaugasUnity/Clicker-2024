@@ -33,7 +33,6 @@ namespace DefaultNamespace
         public float CurrentPrice;
         public float PriceScaling = 1.1f;
        
-        
         // GenerateMoney Variables
         public float BuildingCount;
         public float MoneyAmountPerFill = 5;
@@ -49,11 +48,19 @@ namespace DefaultNamespace
         public GameManager GameManager;
 
         private Coroutine generateMoneyOvertimeCoroutine;
+        
+        // For Data Saving Key (PlayerPrefKey)
+            // + If it building
+            // + Which building
+            // Specific value
+        // !!! Don't change player prefs keys for live games
+        private string PrefKeyBuildingCount => $"{nameof(Building)}/{Name}/{nameof(BuildingCount)}";
 
         private void Start()
         {
             CurrentPrice = BasePrice;
-            
+
+            Load();
             UpdateBuildingText();
         }
         
@@ -90,8 +97,8 @@ namespace DefaultNamespace
                 
                 // The same as BuildingCount += 1;
                 BuildingCount++;
-                
-                
+
+                Save();
                 
                 // Generate Money
                 if (generateMoneyOvertimeCoroutine is null)
@@ -100,7 +107,6 @@ namespace DefaultNamespace
                 }
             }
         }
-        
         
         // Generate money
             // Variables: buildingCount, moneyAmountPerFill, fillTime
@@ -119,7 +125,7 @@ namespace DefaultNamespace
 
                 float buildingIncome = BuildingCount * MoneyAmountPerFill;
 
-                GameManager.TotalMoney += buildingIncome;
+                GameManager.TotalMoney += buildingIncome * GameManager.GlobalMultiplier;
                 GameManager.UpdateScoreUI();
             }
         }
@@ -135,9 +141,42 @@ namespace DefaultNamespace
             // The same
             // ButtonText.text = Name + " - " + CurrentPrice;
             ButtonText.text = $"{Name}";
-            PriceText.text = $"{CurrentPrice}";
+            PriceText.text = $"{Mathf.CeilToInt(CurrentPrice)}";
             
             // New variables.text = CurrentPrice
+        }
+
+        public void Save()
+        {
+            PlayerPrefs.SetFloat(PrefKeyBuildingCount, BuildingCount);
+            
+            PlayerPrefs.Save();
+        }
+
+        private void Load()
+        {
+            BuildingCount = PlayerPrefs.GetFloat(PrefKeyBuildingCount, 0);
+
+            if (BuildingCount > 0)
+            {
+                generateMoneyOvertimeCoroutine = StartCoroutine(GenerateMoney());
+            }
+
+            for (int i = 0; i < BuildingCount; i++)
+            {
+                CurrentPrice *= PriceScaling;
+            }
+        }
+
+        private void SoftReset()
+        {
+            BuildingCount = 0;
+            CurrentPrice = BasePrice;
+            
+            StopCoroutine(generateMoneyOvertimeCoroutine);
+            
+            Save();
+            UpdateBuildingText();
         }
     }
 }

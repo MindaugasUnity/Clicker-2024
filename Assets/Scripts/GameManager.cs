@@ -46,20 +46,31 @@ public class GameManager : MonoBehaviour
     // Double max value 10 ^ 308
     public int CursorPrice = 5;
     
+    private string PrefKeyForTotalMoney = $"{nameof(GameManager)}/{nameof(TotalMoney)}";
+    
+    public float GlobalMultiplier => baseGlobalMultiplayer + prestigeCount / 100 * 5; // 5 percent
+    
+    private float baseGlobalMultiplayer = 1;
+    private float prestigeCount = 1;
+    
     private void Start()
     {
+        TotalMoney = PlayerPrefs.GetFloat(PrefKeyForTotalMoney, 0);
+        
         UpdateScoreUI();
     }
 
     // Method signature - visibility(public/private) | returnType | MethodName (MethodVariable)
     public void Click()
     {
-        TotalMoney += ClickPower; // Is the same as -> totalMoney = totalMoney + clickPower;  
+        TotalMoney += ClickPower * GlobalMultiplier; // Is the same as -> totalMoney = totalMoney + clickPower;  
         UpdateScoreUI();
     }
 
     public void UpdateScoreUI()
     {
+        Save();
+        
         moneyText.text = Mathf.FloorToInt(TotalMoney).ToString();
     }
     
@@ -90,5 +101,24 @@ public class GameManager : MonoBehaviour
             
             UpdateScoreUI();
         }
+    }
+    
+    private void Save()
+    {
+        PlayerPrefs.SetFloat(PrefKeyForTotalMoney, TotalMoney);
+    
+        PlayerPrefs.Save();
+    }
+
+    public void SoftReset()
+    {
+        TotalMoney = 0;
+
+        CursorPrice = 5;
+        CancelInvoke(nameof(Click));
+        
+        UpdateScoreUI();
+        
+        Save();
     }
 }
